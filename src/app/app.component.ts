@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-//Services
+//Services 
 import { GlobalService } from './services/global.service';
 
 @Component({

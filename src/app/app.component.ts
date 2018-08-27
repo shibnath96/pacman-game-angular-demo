@@ -213,9 +213,7 @@ export class AppComponent implements OnInit{
   prevCoin;
   ghostMoved( x, y ) {
     console.log(this.prevCoin);
-    
-    this.gameMap[x][y] = this.prevCoin;
-    
+    this.gameMap[x][y] = this.prevCoin; 
   }
 
   moveUp() {
@@ -260,9 +258,7 @@ export class AppComponent implements OnInit{
   }
 
   swapPosition(newX, newY) {
-    let t = this.gameMap[this.ghostX][this.ghostY];
     this.gameMap[ newX ][ newY ] = 3;
-    this.gameMap[this.ghostX][this.ghostY] = t;
   }
 
 }

@@ -11,6 +11,7 @@ import { GlobalService } from './services/global.service';
 export class AppComponent implements OnInit{
   
   title = 'Pacman Game';
+  gameFinished: boolean = false;
   gameMap : Array<Object>;
   initPacmanX: any; initPacmanY: any;
   WALL: number = 0; PACMAN: number = 5; ROAD: number = 2;
@@ -125,8 +126,11 @@ export class AppComponent implements OnInit{
       
     }
     
-    console.log(this.initPacmanX,this.initPacmanY);
-    this.gameMap [ this.initPacmanX ][ this.initPacmanY ] = 5;
+    if( !this.gameFinished ){
+      console.log(this.initPacmanX,this.initPacmanY);
+      this.gameMap [ this.initPacmanX ][ this.initPacmanY ] = 5;
+    }
+    
   }
 
   pacmanMoved( x , y ) {
@@ -163,7 +167,7 @@ export class AppComponent implements OnInit{
     }
     
   }
-
+  timeInterVal;
   ghostRun() {
     
     if( this.ghostRunning ){
@@ -181,31 +185,36 @@ export class AppComponent implements OnInit{
       console.log('Ghost located at : GameMap['+this.ghostX+']['+this.ghostY+']=' + this.gameMap[this.ghostX][this.ghostY]);
       let i = 0;
 
-      let run = setInterval( () => {
+      this.timeInterVal = setInterval( () => {
         //Initial coordinate of ghost(10,9);
         
         //Checking which direction the ghost can take to roam in ghost map
-        //let move = Math.floor((Math.random() * 4) + 1);
-        let move = 1;
-        if( move == 1){
+        let move = Math.floor((Math.random() * 2) + 1);
+        let dec;
+        let final;
+        
+        
+
+        if( final == 1){
           //move up
           this.moveUp();
-        }else if( move == 2) {
+        }else if( final == 2) {
           //move right
           this.moveRight();
-        }else if( move == 3) {
+        }else if( final == 3) {
           //move down
           this.moveDown();
-        }else if( move == 4 ) {
+        }else if( final == 4 ) {
           //move left
           this.moveLeft();
         }
+        
   
         //Terminating condition
-        if( i == 10)
-          clearInterval(run);
-        i++;
-      }, 400 );
+        // if( i == 10)
+        //   clearInterval(run);
+        // i++;
+      }, 100 );
 
     }
 
@@ -224,15 +233,19 @@ export class AppComponent implements OnInit{
       if(this.gameMap[ this.ghostX - 1 ][ this.ghostY ] !== this.WALL){
 
         let nextUp = this.gameMap[ this.ghostX - 1 ][ this.ghostY ];
+        this.ghostMoved( this.ghostX, this.ghostY );
         if( nextUp == this.EAT_COIN) {
           this.prevCoin = this.EAT_COIN;
         }else if(nextUp == this.EAT_BIG_COIN){
           this.prevCoin = this.EAT_BIG_COIN;
+        }else if(nextUp == this.PACMAN){
+          this.gameFinished = true;
+          clearInterval(this.timeInterVal);
         }else{
           this.prevCoin = this.ROAD;
         }
-        this.swapPosition(this.ghostX - 1, this.ghostY);
-        this.ghostMoved( this.ghostX, this.ghostY );
+        this.newPositionGhost(this.ghostX - 1, this.ghostY);
+        
         this.ghostX --;
       }
     }
@@ -240,24 +253,85 @@ export class AppComponent implements OnInit{
 
   moveRight() {
     console.log('moveRight');
-    
+    if(this.ghostY == this.gameMap[this.ghostY]['length'] - 1){
+      console.log('Ghost reach extreme right of map');
+    } else {
+      let nextUp = this.gameMap[ this.ghostX ][ this.ghostY + 1 ];
+      if(nextUp !== this.WALL){
+
+        this.ghostMoved( this.ghostX, this.ghostY );
+        if( nextUp == this.EAT_COIN) {
+          this.prevCoin = this.EAT_COIN;
+        }else if(nextUp == this.EAT_BIG_COIN){
+          this.prevCoin = this.EAT_BIG_COIN;
+        }else if(nextUp == this.PACMAN){
+          this.gameFinished = true;
+          clearInterval(this.timeInterVal);
+        }else{
+          this.prevCoin = this.ROAD;
+        }
+        this.newPositionGhost(this.ghostX , this.ghostY + 1);
+        
+        this.ghostY ++;
+      }
+    }
   }
 
   moveDown() {
     console.log('moveDown');
-    if(this.ghostX == 0){
+    if(this.ghostX == this.gameMap.length - 1){
       console.log('Ghost reach extreme down of map');
     } else {
-      
+
+      let nextUp = this.gameMap[ this.ghostX + 1 ][ this.ghostY ];
+
+      if( nextUp !== this.WALL ){
+
+        this.ghostMoved( this.ghostX, this.ghostY );
+        if( nextUp == this.EAT_COIN) {
+          this.prevCoin = this.EAT_COIN;
+        }else if(nextUp == this.EAT_BIG_COIN){
+          this.prevCoin = this.EAT_BIG_COIN;
+        }else if(nextUp == this.PACMAN){
+          this.gameFinished = true;
+          clearInterval(this.timeInterVal);
+        }else{
+          this.prevCoin = this.ROAD;
+        }
+        this.newPositionGhost(this.ghostX + 1, this.ghostY);
+        
+        this.ghostX ++;
+      }
     }
   }
 
   moveLeft() {
     console.log('moveLeft');
-    
+    if( this.ghostY == 0 ){
+      console.log('Ghost reach extreme left of map');
+    } else {
+      let nextUp = this.gameMap[ this.ghostX ][ this.ghostY - 1 ];
+      if(nextUp !== this.WALL){
+
+        this.ghostMoved( this.ghostX, this.ghostY );
+        if( nextUp == this.EAT_COIN) {
+          this.prevCoin = this.EAT_COIN;
+        }else if(nextUp == this.EAT_BIG_COIN){
+          this.prevCoin = this.EAT_BIG_COIN;
+        }else if(nextUp == this.PACMAN){
+          this.gameFinished = true;
+          clearInterval(this.timeInterVal);
+        }else{
+          this.prevCoin = this.ROAD;
+        }
+        this.newPositionGhost(this.ghostX , this.ghostY - 1);
+        
+        this.ghostY --;
+      }
+    }
   }
 
-  swapPosition(newX, newY) {
+  newPositionGhost(newX, newY) {
     this.gameMap[ newX ][ newY ] = 3;
   }
 

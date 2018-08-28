@@ -17,7 +17,8 @@ export class AppComponent implements OnInit{
   WALL: number = 0; PACMAN: number = 5; ROAD: number = 2;
   EAT_COIN: number = 1; EAT_BIG_COIN:number = 4; GHOST: number = 3;
   totalScore: number = 0; eatCoin : number = 2; eatBigCoin = 4;
-  pacmanMove:number = 2; // 1 ==> up, 2==>right, 3==>down, 4==>left 
+  pacmanMove:number = 2; // 1 ==> up, 2==>right, 3==>down, 4==>left
+  ghostMeetWall:boolean = false;
 
   //Gost properties
   ghostY:number; ghostX:number;
@@ -167,7 +168,7 @@ export class AppComponent implements OnInit{
     }
     
   }
-  timeInterVal;
+  timeInterVal;movement;
   ghostRun() {
     
     if( this.ghostRunning ){
@@ -184,16 +185,39 @@ export class AppComponent implements OnInit{
   
       console.log('Ghost located at : GameMap['+this.ghostX+']['+this.ghostY+']=' + this.gameMap[this.ghostX][this.ghostY]);
       let i = 0;
-
+      this.movement = Math.floor((Math.random() * 2) + 1);
+      let final;
       this.timeInterVal = setInterval( () => {
         //Initial coordinate of ghost(10,9);
         
         //Checking which direction the ghost can take to roam in ghost map
-        let move = Math.floor((Math.random() * 2) + 1);
-        let dec;
-        let final;
         
+        //1--> UP, 2--> Right, 3--> Down, 4--> Left
+        //console.log(this.movement);
         
+        if( !this.ghostMeetWall ){
+          final = this.movement;
+        }else {
+          console.log('Ghost meet Wall');
+          //clearInterval(this.timeInterVal);
+          this.movement = this.generateRandomNumber(this.movement);
+          final = this.movement;
+          console.log(final);
+          
+        }
+
+
+        if(this.ghostX == this.initPacmanX){
+          console.log('ghost and pacman on same line!!');
+          if( this.ghostY < this.initPacmanY ) {
+            //right move
+            final = 2;
+          }else {
+            //Right move
+            console.log('packman on left of ghost');
+            final = 4
+          }
+        }
 
         if( final == 1){
           //move up
@@ -214,14 +238,13 @@ export class AppComponent implements OnInit{
         // if( i == 10)
         //   clearInterval(run);
         // i++;
-      }, 100 );
+      }, 1000 );
 
     }
 
   }
   prevCoin;
   ghostMoved( x, y ) {
-    console.log(this.prevCoin);
     this.gameMap[x][y] = this.prevCoin; 
   }
 
@@ -230,9 +253,11 @@ export class AppComponent implements OnInit{
     if(this.ghostX == 0){
       console.log('Ghost reach extreme up of map');
     } else {
-      if(this.gameMap[ this.ghostX - 1 ][ this.ghostY ] !== this.WALL){
 
-        let nextUp = this.gameMap[ this.ghostX - 1 ][ this.ghostY ];
+      let nextUp = this.gameMap[ this.ghostX - 1 ][ this.ghostY ];
+      if(nextUp == this.WALL){
+        this.ghostMeetWall = true;
+      }else{
         this.ghostMoved( this.ghostX, this.ghostY );
         if( nextUp == this.EAT_COIN) {
           this.prevCoin = this.EAT_COIN;
@@ -247,6 +272,7 @@ export class AppComponent implements OnInit{
         this.newPositionGhost(this.ghostX - 1, this.ghostY);
         
         this.ghostX --;
+        this.ghostMeetWall = false;
       }
     }
   }
@@ -257,8 +283,10 @@ export class AppComponent implements OnInit{
       console.log('Ghost reach extreme right of map');
     } else {
       let nextUp = this.gameMap[ this.ghostX ][ this.ghostY + 1 ];
-      if(nextUp !== this.WALL){
-
+      if(nextUp == this.WALL){
+        this.ghostMeetWall = true;
+        
+      }else {
         this.ghostMoved( this.ghostX, this.ghostY );
         if( nextUp == this.EAT_COIN) {
           this.prevCoin = this.EAT_COIN;
@@ -273,6 +301,7 @@ export class AppComponent implements OnInit{
         this.newPositionGhost(this.ghostX , this.ghostY + 1);
         
         this.ghostY ++;
+        this.ghostMeetWall = false;
       }
     }
   }
@@ -285,8 +314,9 @@ export class AppComponent implements OnInit{
 
       let nextUp = this.gameMap[ this.ghostX + 1 ][ this.ghostY ];
 
-      if( nextUp !== this.WALL ){
-
+      if( nextUp == this.WALL ){
+        this.ghostMeetWall = true;
+      }else {
         this.ghostMoved( this.ghostX, this.ghostY );
         if( nextUp == this.EAT_COIN) {
           this.prevCoin = this.EAT_COIN;
@@ -301,6 +331,7 @@ export class AppComponent implements OnInit{
         this.newPositionGhost(this.ghostX + 1, this.ghostY);
         
         this.ghostX ++;
+        this.ghostMeetWall = false;
       }
     }
   }
@@ -311,8 +342,9 @@ export class AppComponent implements OnInit{
       console.log('Ghost reach extreme left of map');
     } else {
       let nextUp = this.gameMap[ this.ghostX ][ this.ghostY - 1 ];
-      if(nextUp !== this.WALL){
-
+      if(nextUp == this.WALL){
+        this.ghostMeetWall = true;
+      }else {
         this.ghostMoved( this.ghostX, this.ghostY );
         if( nextUp == this.EAT_COIN) {
           this.prevCoin = this.EAT_COIN;
@@ -327,6 +359,7 @@ export class AppComponent implements OnInit{
         this.newPositionGhost(this.ghostX , this.ghostY - 1);
         
         this.ghostY --;
+        this.ghostMeetWall = false;
       }
     }
   }
@@ -335,4 +368,18 @@ export class AppComponent implements OnInit{
     this.gameMap[ newX ][ newY ] = 3;
   }
 
+  generateRandomNumber(t){
+    var flag = true;
+    var i = 1;
+    var tmp;
+    while(i>0){
+      tmp = Math.floor((Math.random() * 4) + 1);
+      if(tmp != t){
+        break;
+      }
+      i++;
+    }
+    return tmp;
+  
+  }
 }

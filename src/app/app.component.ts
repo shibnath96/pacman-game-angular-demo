@@ -210,10 +210,10 @@ export class AppComponent implements OnInit{
         if(this.ghostX == this.initPacmanX){
           console.log('ghost and pacman on same line!!');
           if( this.ghostY < this.initPacmanY ) {
-            //right move
+            //Move right
             final = 2;
           }else {
-            //Right move
+            //Move left
             console.log('packman on left of ghost');
             final = 4
           }
@@ -381,5 +381,9 @@ export class AppComponent implements OnInit{
     }
     return tmp;
   
+  }
+
+  findingNearestRoad( gx, gy ) {
+
   }
 }

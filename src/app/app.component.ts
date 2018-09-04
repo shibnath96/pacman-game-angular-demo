@@ -238,7 +238,7 @@ export class AppComponent implements OnInit{
         // if( i == 10)
         //   clearInterval(run);
         // i++;
-      }, 1000 );
+      }, 200 );
 
     }
 

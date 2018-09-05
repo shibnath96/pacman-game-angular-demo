@@ -1,0 +1,46 @@
+//First random move
+        if( !this.ghostMeetWall ){
+          final = this.movement;
+        }else {
+          console.log('Ghost meet Wall');
+          //clearInterval(this.timeInterVal);
+          //this.movement = this.generateRandomNumber(this.movement);
+          
+          this.movement = this.findUnblockedWay( this.ghostX, this.ghostY )
+          final = this.movement;
+          console.log(final);
+          
+        }
+
+        //When Ghost and Pacman on same line horizentally
+        if(this.ghostX == this.initPacmanX){
+          console.log('ghost and pacman on same line horizentally!!');
+          if( this.ghostMeetWall ) {
+            this.movement = this.findUnblockedWay( this.ghostX, this.ghostY )
+            final = this.movement;
+          }else {
+            if( this.ghostY < this.initPacmanY ) {
+              //Move right
+              final = 2;
+            } else {
+              //Move left
+              final = 4
+            }
+          }
+        }
+        //When Ghost and Pacman on same line vertically
+        if(this.ghostY == this.initPacmanY) {
+          console.log('Ghost and Pacman on line vertically!!');
+          if( this.ghostMeetWall ){
+            this.movement = this.findUnblockedWay( this.ghostX, this.ghostY )
+            final = this.movement;
+          } else {
+            if( this.ghostX > this.initPacmanX ) {
+              //Move up
+              final = 1;
+            }else {
+              //Move down
+              final = 3;
+            }
+          }
+        }

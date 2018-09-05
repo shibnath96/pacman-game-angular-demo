@@ -184,65 +184,42 @@ export class AppComponent implements OnInit{
       }
   
       console.log('Ghost located at : GameMap['+this.ghostX+']['+this.ghostY+']=' + this.gameMap[this.ghostX][this.ghostY]);
-      let i = 0;
-      this.movement = Math.floor((Math.random() * 2) + 1);
-      let final;
+      
       this.timeInterVal = setInterval( () => {
-        //Initial coordinate of ghost(10,9);
-        
-        //Checking which direction the ghost can take to roam in ghost map
         
         //1--> UP, 2--> Right, 3--> Down, 4--> Left
-        //console.log(this.movement);
+        //Control of ghost's movement
+
+        //First of all we need to find in what zone Pacman sitting right now respect to Ghost position
+
         
-        if( !this.ghostMeetWall ){
-          final = this.movement;
-        }else {
-          console.log('Ghost meet Wall');
-          //clearInterval(this.timeInterVal);
-          this.movement = this.generateRandomNumber(this.movement);
-          final = this.movement;
-          console.log(final);
-          
-        }
-
-
-        if(this.ghostX == this.initPacmanX){
-          console.log('ghost and pacman on same line!!');
-          if( this.ghostY < this.initPacmanY ) {
-            //Move right
-            final = 2;
-          }else {
-            //Move left
-            console.log('packman on left of ghost');
-            final = 4
-          }
-        }
-
-        if( final == 1){
-          //move up
-          this.moveUp();
-        }else if( final == 2) {
-          //move right
-          this.moveRight();
-        }else if( final == 3) {
-          //move down
-          this.moveDown();
-        }else if( final == 4 ) {
-          //move left
-          this.moveLeft();
-        }
-        
-  
-        //Terminating condition
-        // if( i == 10)
-        //   clearInterval(run);
-        // i++;
       }, 200 );
 
     }
 
   }
+
+
+  findOpenPath() {
+    let a: Array<any> = [];
+  }
+
+  ghostMovement( move ) {
+    if( move == 1){
+      //move up
+      this.moveUp();
+    }else if( move == 2) {
+      //move right
+      this.moveRight();
+    }else if( move == 3) {
+      //move down
+      this.moveDown();
+    }else if( move == 4 ) {
+      //move left
+      this.moveLeft();
+    }
+  }
+
   prevCoin;
   ghostMoved( x, y ) {
     this.gameMap[x][y] = this.prevCoin; 
@@ -383,7 +360,19 @@ export class AppComponent implements OnInit{
   
   }
 
-  findingNearestRoad( gx, gy ) {
-
+  findUnblockedWay( gx, gy ) {
+    if( this.gameMap[ gx - 1][ gy ] !== 0 ) {
+      //Check up
+      return 1;
+    }else if( this.gameMap[ gx ][ gy + 1 ] !== 0 ) {
+      //Check right
+      return 2;
+    }else if( this.gameMap[ gx + 1 ][ gy ] !== 0 ) {
+      //Check down
+      return 3;
+    }else if( this.gameMap[ gx ][ gy - 1 ] !== 0 ) {
+      //Check left
+      return 4;
+    }
   }
 }

@@ -184,21 +184,51 @@ export class AppComponent implements OnInit{
       }
   
       console.log('Ghost located at : GameMap['+this.ghostX+']['+this.ghostY+']=' + this.gameMap[this.ghostX][this.ghostY]);
-      
+      let wallMeetLeft = false;
       this.timeInterVal = setInterval( () => {
         
         //1--> UP, 2--> Right, 3--> Down, 4--> Left
         //Control of ghost's movement
 
         //First of all we need to find in what zone Pacman sitting right now respect to Ghost position
+        
+        if( (this.ghostX < this.initPacmanX) && (this.ghostY < this.initPacmanY) ) {
+          //When pacman located down-right on map respect to ghost's current position
+          console.log('Pacman is now down-right of ghost');
+          // G--> (4,2) , P--> (18,14)
+          if( this.gameMap[this.ghostX + 1][this.ghostY] == this.WALL ) {
+            //distance of G b/w P vertically
+            //console.log(Math.abs(this.ghostY - this.initPacmanY));
+            if(this.gameMap[this.ghostX][this.ghostY + 1] !== this.WALL) {
+              this.moveRight();
+            }else {
+              this.moveLeft();
+            }
+          }else {
+            this.moveDown();
+          }
 
+        }else if( (this.ghostX < this.initPacmanX) && (this.ghostY > this.initPacmanY) ) {
+          //When pacman located down-left on map respect to ghost's current position
+          console.log('Pacman is now down-left of ghost');
+        
+        }else if(this.ghostY == this.initPacmanY) {
+          //When ghost and pacman are on same line vertically on map
+          console.log('Ghost and Pacman on line vertically!!');
+          if( this.ghostX < this.initPacmanX ) {
+            console.log('Pacman is now down side of ghost vertically');
+            
+          }else if( this.ghostX > this.initPacmanX ) {
+            console.log('Pacman is now up side of ghost vertically');
+            
+          }
+        }
         
       }, 200 );
 
     }
 
   }
-
 
   findOpenPath() {
     let a: Array<any> = [];

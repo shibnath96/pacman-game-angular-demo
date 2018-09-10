@@ -184,7 +184,7 @@ export class AppComponent implements OnInit{
       }
   
       console.log('Ghost located at : GameMap['+this.ghostX+']['+this.ghostY+']=' + this.gameMap[this.ghostX][this.ghostY]);
-      let wallMeetLeft = false;
+      let wallMeetRight = false;
       this.timeInterVal = setInterval( () => {
         
         //1--> UP, 2--> Right, 3--> Down, 4--> Left
@@ -195,17 +195,19 @@ export class AppComponent implements OnInit{
         if( (this.ghostX < this.initPacmanX) && (this.ghostY < this.initPacmanY) ) {
           //When pacman located down-right on map respect to ghost's current position
           console.log('Pacman is now down-right of ghost');
+          
           // G--> (4,2) , P--> (18,14)
           if( this.gameMap[this.ghostX + 1][this.ghostY] == this.WALL ) {
-            //distance of G b/w P vertically
-            //console.log(Math.abs(this.ghostY - this.initPacmanY));
-            if(this.gameMap[this.ghostX][this.ghostY + 1] !== this.WALL) {
+            //When down step of ghost is blocked
+            if( this.gameMap[this.ghostX][this.ghostY + 1] !== this.WALL && !wallMeetRight){
               this.moveRight();
             }else {
               this.moveLeft();
+              wallMeetRight = true;
             }
           }else {
             this.moveDown();
+            wallMeetRight = false;
           }
 
         }else if( (this.ghostX < this.initPacmanX) && (this.ghostY > this.initPacmanY) ) {
